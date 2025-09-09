@@ -444,6 +444,7 @@ def main():
             optimizer,
             factor = 1. / args.decay,
             patience = args.patience,
+
             mode = "max",
         )
     elif args.schedule == "noam":

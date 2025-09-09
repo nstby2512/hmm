@@ -258,7 +258,7 @@ class FactoredHmmLm(nn.Module):
 
         i = th.stack([word2state.view(-1), a])
         C = logits.shape[0]
-        sparse = th.sparse.ByteTensor(i, v, th.Size([C, len(self.V)]))
+        sparse = th.sparse_coo_tensor(i, v, size=(C, len(self.V)), dtype=th.uint8) #修改
         mask = sparse.to_dense().bool().to(logits.device)
         log_probs = logits.masked_fill_(~mask, float("-inf")).log_softmax(-1)
         return log_probs
