@@ -272,6 +272,9 @@ def train_loop(
             if args.schedule not in valid_schedules:
                 scheduler.step()
             optimizer.step()
+
+            th.cuda.empty_cache()#清除缓存
+            
             wandb.log({
                 "running_training_loss": total_ll / n,
                 "running_training_ppl": math.exp(min(-total_ll / n, 700)),
