@@ -27,6 +27,8 @@ from utils import Pack
 from utils import plot_counts
 
 import wandb
+import os
+os.environ["WANDB_MODE"] = "online"
 
 valid_schedules = ["reducelronplateau"]
 
