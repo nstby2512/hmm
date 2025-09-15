@@ -78,22 +78,24 @@ class FactoredHmmLm(nn.Module):
 
         assert self.states_per_word * num_clusters <= self.C
 
-        word2state = None
-        if config.assignment == "brown":
-            (
-                word2state,
-                cluster2state,
-                word2cluster,
-                c2sw_d,
-            ) = assign_states_brown_cluster(
-                self.C,
-                word2cluster,
-                V,
-                self.states_per_word,
-                self.states_per_word_d,
-            )
-        else:
-            raise ValueError(f"No such assignment {config.assignment}")
+        # word2state = None
+        # if config.assignment == "brown":
+        #     (
+        #         word2state,
+        #         cluster2state,
+        #         word2cluster,
+        #         c2sw_d,
+        #     ) = assign_states_brown_cluster(
+        #         self.C,
+        #         word2cluster,
+        #         V,
+        #         self.states_per_word,
+        #         self.states_per_word_d,
+        #     )
+        # else:
+        #     raise ValueError(f"No such assignment {config.assignment}")
+        word2state = th.randint(0, self.C, (len(V), self.states_per_word))
+
 
         # need to save this with model
         self.register_buffer("word2state", th.from_numpy(word2state))
