@@ -94,19 +94,49 @@ class FactoredHmmLm(nn.Module):
         #     )
         # else:
         #     raise ValueError(f"No such assignment {config.assignment}")
-        word2state = th.randint(0, self.C, (len(V), self.states_per_word))
+        
 
 
-        # need to save this with model
-        self.register_buffer("word2state", th.from_numpy(word2state))
-        self.register_buffer("cluster2state", th.from_numpy(cluster2state))
-        self.register_buffer("word2cluster", th.from_numpy(word2cluster))
+        # # need to save this with model
+        # self.register_buffer("word2state", th.from_numpy(word2state))
+        # self.register_buffer("cluster2state", th.from_numpy(cluster2state))
+        # self.register_buffer("word2cluster", th.from_numpy(word2cluster))
+        # self.register_buffer("c2sw_d", c2sw_d)
+        # self.register_buffer("word2state_d", self.c2sw_d[self.word2cluster])
+
+        # self.tvm_fb = "tvm_fb" in config and config.tvm_fb
+        # self.fb_train = foo.get_fb(self.train_states_per_word)
+        # self.fb_test = foo.get_fb(self.states_per_word)
+
+        # 随机分配 word2state
+        if config.assignment == "brown":
+            # 这里原本是 Brown cluster 分配
+            # 改为随机初始化
+            word2state = th.randint(
+                low=0,
+                high=self.C,
+                size=(len(V), self.states_per_word),
+                dtype=th.long
+            )
+            # cluster2state、word2cluster、c2sw_d 也要初始化
+            cluster2state = th.arange(self.C)  # 简单映射，每个 cluster 对应一个 state
+            word2cluster = th.zeros(len(V), dtype=th.long)  # 所有词归到同一个 cluster，防止索引出错
+            c2sw_d = th.ones(self.C, self.states_per_word_d, dtype=th.long)  # 任意初始化
+        else:
+            raise ValueError(f"No such assignment {config.assignment}")
+
+        # 保存到 model buffer
+        self.register_buffer("word2state", word2state)
+        self.register_buffer("cluster2state", cluster2state)
+        self.register_buffer("word2cluster", word2cluster)
         self.register_buffer("c2sw_d", c2sw_d)
         self.register_buffer("word2state_d", self.c2sw_d[self.word2cluster])
 
+        # 其它保持原样
         self.tvm_fb = "tvm_fb" in config and config.tvm_fb
         self.fb_train = foo.get_fb(self.train_states_per_word)
         self.fb_test = foo.get_fb(self.states_per_word)
+
 
         # p(z0)
         self.start_emb = StateEmbedding(
