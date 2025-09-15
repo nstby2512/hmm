@@ -165,13 +165,12 @@ class PennTreebank(LanguageModelingDataset):
 
 class WikiText2(LanguageModelingDataset):
 
-    urls = ['https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-2-v1.zip']
     name = 'wikitext-2'
     dirname = 'wikitext-2'
 
     @classmethod
-    def splits(cls, text_field, root='.data', train='wiki.train.tokens',
-               validation='wiki.valid.tokens', test='wiki.test.tokens',
+    def splits(cls, text_field, root='.data', train='childes.train',
+               validation='childes.dev', test='childes.test',
                **kwargs):
         """Create dataset objects for splits of the WikiText-2 dataset.
         This is the most flexible way to use the dataset.
@@ -218,3 +217,31 @@ class WikiText2(LanguageModelingDataset):
         return data.BPTTIterator.splits(
             (train, val, test), batch_size=batch_size, bptt_len=bptt_len,
             device=device)
+
+
+
+#add BabyLm 0915
+class BabyLM(LanguageModelingDataset):
+    name = 'babylm'
+    dirname = ''
+
+    @classmethod
+    def splits(cls, text_field, root='.data',
+               train='babylm_10M.train',
+               validation='babylm_10M.dev',
+               test='babylm_10M.test',
+               **kwargs):
+        return super(BabyLM, cls).splits(
+            root=root, train=train, validation=validation, test=test,
+            text_field=text_field, articles=False, **kwargs)
+
+    @classmethod
+    def iters(cls, batch_size=32, bptt_len=35, device=0, root='.data',
+              vectors=None, **kwargs):
+        TEXT = data.Field()
+        train, val, test = cls.splits(TEXT, root=root, **kwargs)
+        TEXT.build_vocab(train, vectors=vectors)
+        return data.BPTTIterator.splits(
+            (train, val, test), batch_size=batch_size, bptt_len=bptt_len,
+            device=device)
+
