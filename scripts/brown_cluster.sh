@@ -8,6 +8,10 @@ w2input=.data/wikitext-2/wikitext-2/wiki.train.tokens
 w2finput=.data/wikitext-2/wikitext-2/wiki.train.tokens.flat
 w2fainput=.data/wikitext-2/wikitext-2/wiki.train.tokens.flatarticles
 
+bncinput=.data/wikitext-2/wikitext-2/bnc.train
+bncfinput=.data/wikitext-2/wikitext-2/bnc.train.flat
+bncfainput=.data/wikitext-2/wikitext-2/bnc.train.flatarticles
+
 wsjinput=.data/PTB/ptb.txt
 
 supwsjinput=.data/PTB/sup/ptb.train.txt
@@ -107,6 +111,25 @@ elif [[ "$1" == "w2flm4" ]]; then
     $l_cluster --text $w2finput --c 4 --output_dir clusters/w2flm-4
 elif [[ "$1" == "w2falm128" ]]; then
     $l_cluster --text $w2fainput --c 128 --output_dir clusters/w2falm-128
+
+elif [[ "$1" == "bnc256" ]]; then
+    $l_cluster --text $bncinput --c 256 --output_dir clusters/bnc-256
+elif [[ "$1" == "bnc128" ]]; then
+    $l_cluster --text $bncinput --c 128 --output_dir clusters/bnc-128
+elif [[ "$1" == "bnc64" ]]; then
+    $l_cluster --text $bncinput --c 64 --output_dir clusters/bnc-64
+elif [[ "$1" == "bnc32" ]]; then
+    $l_cluster --text $bncinput --c 32 --output_dir clusters/bnc-32
+elif [[ "$1" == "bnc16" ]]; then
+    $l_cluster --text $bncinput --c 16 --output_dir clusters/bnc-16
+elif [[ "$1" == "bnc8" ]]; then
+    $l_cluster --text $bncinput --c 8 --output_dir clusters/bnc-8
+elif [[ "$1" == "bnc4" ]]; then
+    $l_cluster --text $bncinput --c 4 --output_dir clusters/bnc-4
+elif [[ "$1" == "bncf256" ]]; then
+    $l_cluster --text $bncfinput --c 256 --output_dir clusters/bncf-256
+elif [[ "$1" == "bncf128" ]]; then
+    $l_cluster --text $bncfinput --c 128 --output_dir clusters/bncf-128
 
 else
     echo "Improper argument"
