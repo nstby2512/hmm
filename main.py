@@ -17,7 +17,7 @@ from torch.optim import AdamW, SGD
 from torch.optim.lr_scheduler import ReduceLROnPlateau, LambdaLR
 
 import torchtext
-from datasets.lm import PennTreebank, WikiText2
+from datasets.lm import PennTreebank, WikiText2, BabyLm
 from datasets.data import BucketIterator, BPTTIterator
 
 from args import get_args

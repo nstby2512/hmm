@@ -59,35 +59,69 @@ def read_lm_clusters(V, path="clusters/lm-128/paths"):
             dict(cluster2word),
         )
 
+# def assign_states_brown_cluster(
+#     num_states, word2cluster, V,
+#     states_per_word,
+#     states_per_word_d,
+# ):
+#     # must have num_states = num_clusters * num_repeats 
+#     num_words = len(V)
+#     # assume this is less than num_states // states_per_word
+#     num_clusters = len(set(word2cluster.values()))
+#     #states_per_word = num_states // num_clusters
+#     w2c = np.ndarray(len(V), dtype=np.int64)
+#     for word in range(len(V)):
+#         w2c[word] = (word2cluster[word]
+#             if word in word2cluster
+#             else num_clusters-1
+#         )
+#     cluster2state = np.ndarray((num_clusters, states_per_word), dtype=np.int64)
+#     for c in range(0, num_clusters):
+#         cluster2state[c] = range(
+#             states_per_word * c,
+#             states_per_word * (c + 1),
+#         )
+#     word2state = cluster2state[w2c]
+#     # the dropped cluster to words after reindexing
+#     # assume states per word // 2
+#     c2sw_d = th.LongTensor([
+#         list(range(c * states_per_word_d, (c+1) * states_per_word_d))
+#         for c in range(num_clusters)
+#     ])
+#     return word2state, cluster2state, w2c, c2sw_d
+
+
 def assign_states_brown_cluster(
     num_states, word2cluster, V,
     states_per_word,
     states_per_word_d,
 ):
-    # must have num_states = num_clusters * num_repeats 
-    num_words = len(V)
-    # assume this is less than num_states // states_per_word
-    num_clusters = len(set(word2cluster.values()))
-    #states_per_word = num_states // num_clusters
+    # 获取所有聚类索引并重新映射到0开始的连续索引
+    unique_clusters = sorted(set(word2cluster.values()))
+    cluster_remapping = {old: new for new, old in enumerate(unique_clusters)}
+    num_clusters = len(unique_clusters)
+    
     w2c = np.ndarray(len(V), dtype=np.int64)
     for word in range(len(V)):
-        w2c[word] = (word2cluster[word]
-            if word in word2cluster
-            else num_clusters-1
-        )
+        if word in word2cluster:
+            original_cluster = word2cluster[word]
+            w2c[word] = cluster_remapping[original_cluster]
+        else:
+            w2c[word] = num_clusters - 1  # 未知单词映射到最后一个聚类
+    
+    # 其余代码保持不变
     cluster2state = np.ndarray((num_clusters, states_per_word), dtype=np.int64)
     for c in range(0, num_clusters):
         cluster2state[c] = range(
             states_per_word * c,
             states_per_word * (c + 1),
         )
+    
     word2state = cluster2state[w2c]
-    # the dropped cluster to words after reindexing
-    # assume states per word // 2
+    
     c2sw_d = th.LongTensor([
         list(range(c * states_per_word_d, (c+1) * states_per_word_d))
         for c in range(num_clusters)
     ])
+    
     return word2state, cluster2state, w2c, c2sw_d
-
-
