@@ -73,7 +73,7 @@ def assign_states_brown_cluster(
     for word in range(len(V)):
         w2c[word] = (word2cluster[word]
             if word in word2cluster
-            else num_clusters-1
+            else num_clusters-2
         )
     cluster2state = np.ndarray((num_clusters, states_per_word), dtype=np.int64)
     for c in range(0, num_clusters):
