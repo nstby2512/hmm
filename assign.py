@@ -82,7 +82,8 @@ def assign_states_brown_cluster(
             states_per_word * (c + 1),
         )
     word2state = cluster2state[w2c]
-    print(w2c)，print(len(cluster2state))
+    print(w2c)
+    print(len(cluster2state))
     # the dropped cluster to words after reindexing
     # assume states per word // 2
     c2sw_d = th.LongTensor([
