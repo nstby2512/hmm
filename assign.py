@@ -67,8 +67,8 @@ def assign_states_brown_cluster(
     # must have num_states = num_clusters * num_repeats 
     num_words = len(V)
     # assume this is less than num_states // states_per_word
-    num_clusters = len(set(word2cluster.values())) 
-    
+    num_clusters = len(set(word2cluster.values())) + 1
+    print(set(word2cluster.values()))
     #states_per_word = num_states // num_clusters
     w2c = np.ndarray(len(V), dtype=np.int64)
     for word in range(len(V)):
@@ -77,8 +77,8 @@ def assign_states_brown_cluster(
             if word in word2cluster
             else num_clusters-1
         )
-        if w2c[word] > 126:
-            w2c[word] = 126
+        
+    
     cluster2state = np.ndarray((num_clusters, states_per_word), dtype=np.int64)
     for c in range(0, num_clusters):
         cluster2state[c] = range(
