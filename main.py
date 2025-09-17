@@ -361,6 +361,7 @@ def main():
 
     TEXT.build_vocab(train)
     V = TEXT.vocab
+    
 
     def batch_size_tokens(new, count, sofar):
         return max(len(new.text), sofar)
